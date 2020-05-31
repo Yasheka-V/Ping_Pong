@@ -1,0 +1,133 @@
+<html>
+<body>
+<H1><center>Ping Pong<ceter></h1>
+<canvas id="gameconsole" width="800" height="500">
+</canvas>
+<script>
+
+var bx=0;
+var by=100;
+var sx=8;
+var sy=10;
+var mx,my;
+var p1y,p2y,score1=0,score2=0;
+const ph=80;
+
+//Start after the window has completely loaded
+window.onload = function(){
+console.log("Hello World");
+canvas = document.getElementById('gameconsole');
+cc = canvas.getContext('2d');
+
+var framespersec=30;
+
+//call move and draw at 30 frames per sec frequency
+setInterval(function(){
+move();
+draw();
+},1000/framespersec);
+
+//Add EventListener for Mouse Movement
+canvas.addEventListener('mousemove',function(evt){
+	var mousepos = mouse_position(evt);
+	mx= mousepos.x;
+	my= mousepos.y;
+
+	//Set the Paddle center position according to the mouse movement
+	if(mx<canvas.width/2)
+		p1y=my-(ph/2);
+	else
+		p2y=my-(ph/2);
+});
+
+}
+
+//Get Mouse Position with respect to the canvas
+
+function mouse_position(evt)
+{
+	var rect = canvas.getBoundingClientRect();
+	var root= document.documentElement;
+	var mox = evt.clientX-rect.left-root.scrollLeft;
+	var moy=evt.clientY-rect.top-root.scrollTop;
+	return {
+	x:mox,
+	y:moy
+	};
+}
+
+//Function for the movement of the ball
+function move()
+{
+//Increase the position of the ball by sx 
+	bx=bx+sx;
+	//If the paddle 1 misses the ball reset it else bounce back the ball at a particular angle
+		if(bx>canvas.width)
+		{
+			if(by>p2y && by<p2y+ph)
+			{
+			sx=-sx;
+			var deltay = by -(p2y-ph/2);
+			sy= deltay*0.1;
+			}
+		else
+			ball_reset();
+		}
+
+	//If the paddle 2 misses the ball reset it else bounce back the ball at a particular angle
+		if(bx<0)
+		{
+			if(by>p1y && by<p1y+ph)
+			{
+			sx=-sx;
+			var deltay = by -(p1y-ph/2);
+			sy= deltay*0.1;
+			}
+		else
+		ball_reset();
+		}
+
+	by=by+sy;
+	
+	if(by>canvas.height || by<=0)
+		sy=-sy;
+
+}
+
+//Function to reset the ball position to the center of the screen
+function ball_reset()
+{
+	bx=canvas.width/2;
+	by=canvas.height/2;
+	sx=-sx;
+}
+
+//Function to draw everything
+function draw()
+{
+	console.log(my);
+	dcr(0,0,canvas.width,canvas.height,"black");
+	dcr(0,p1y,11,ph,"white");
+	dcr(canvas.width-11,p2y,canvas.width,ph,"white");
+	dcc(bx,by,10,"red");
+}
+
+//Draw colored rectangle
+function dcr(r,l,w,h,c)
+{
+	cc.fillStyle = c;
+	cc.fillRect(r,l,w,h);
+}
+
+//Draw coloured circle
+function dcc(cx,cy,r,c)
+{
+	cc.fillStyle = c;
+	cc.beginPath();
+	cc.arc(cx,cy,r,0,Math.PI*2,true);
+	cc.fill();
+}
+
+</script>
+</body>
+</html>
